@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<style>
+
+    #scatter_plot{
+        height:272px;
+    }
+
+    .dot {
+        stroke: #000;
+    }
+
+    .tooltip {
+        position: absolute;
+        width: 200px;
+        height: 28px;
+        pointer-events: none;
+    }
+
+    #hor{
+        display: inline-block;
+        width: 200px;
+    }
+    #ver{
+        display: inline-block;
+        width:200px;
+    }
+    /*.tooltip {*/
+        /*position: absolute;*/
+        /*pointer-events: none;*/
+
+    /*!*.toolTip {*!*/
+        /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+        /*position: absolute;*/
+        /*display: none;*/
+        /*width: auto;*/
+        /*height: auto;*/
+        /*background: none repeat scroll 0 0 white;*/
+        /*border: 0 none;*/
+        /*border-radius: 8px 8px 8px 8px;*/
+        /*box-shadow: -3px 3px 15px #888888;*/
+        /*color: black;*/
+        /*font: 12px sans-serif;*/
+        /*padding: 5px;*/
+        /*text-align: center;*/
+    /*!*}*!*/
+    /*}*/
+
+
+path { 
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: lightgreen;
+    shape-rendering: crispEdges;
+}
+ 
+.axis text {
+    font-family: Arial;
+    font-size: 10px;
+}
+ 
+.loading {
+    font-family: Verdana;
+    font-size: 16px;
+}
+ 
+.circle {
+    fill: #222;
+}
+
+circle.hidden {
+  fill: #ccc !important;
+}
+
+.extent {
+  fill: #000;
+  fill-opacity: .125;
+  stroke: #fff;
+}
+.cell text {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.frame {
+  fill: none;
+  stroke: #bbb;
+}
+
+    .rect {
+        stroke: none;
+        box-shadow: 12px 12px 12px #666;
+        -webkit-filter: drop-shadow(0 13px 14px rgba(0,0,0,.5));
+        -moz-filter: drop-shadow(0 13px 14px rgba(0,0,0,.5));
+        -ms-filter: drop-shadow(0 13px 14px rgba(0,0,0,.5));
+        -o-filter: drop-shadow(0 13px 14px rgba(0,0,0,.5));
+        filter: drop-shadow(0 13px 14px rgba(0,0,0,.5));
+    }
+
+</style>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Kedar Sankar Behera </title>
+
+    <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="scatterplot.js"></script>
+    <script src="scatter.js"></script>
+    <script src="screeplot.js"></script>
+    <script src="elbowplot.js"></script>
+    <script type="text/javascript" src="hello.js"></script>
+    <script src="loadings.js"></script>
+    <script src="scatterplot_matrix.js"></script>
+    <script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js"></script>
+
+    <form action="/action_page.php">
+    <table border = 2>
+        <tr>
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="elbow_plot('elbow.csv')">Elbow Plot </td>-->
+            <!--<td><input type="radio" name="reduction" onclick="elbow_plot('PCAelbow.csv')">PCA dimension </td>-->
+        </tr>
+    </table>
+    <table border = 2>
+        <tr>
+           <td> <b>Best Contributions in NBA History for their teams</b> </td>
+        </tr>
+        <tr>
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_values('pca.csv')">PCA </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_values('correlation.csv')">MDS Correlation </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_values('euclidean.csv')">MDS Euclidean</td>-->
+            <td bgcolor='black'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_career_shooter_all_35_val.csv',1)" checked ><font color="white">All</font> </td>
+            <td bgcolor='magenta'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_bigShooter_35_val.csv',2)"><font color="black">Shooter + BigMan</font></td>
+            <td bgcolor='cyan'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_guardShooter_35_val.csv',3)"><font color="black">Shooter + Guard</font></td>
+            <td bgcolor='yellow'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_bigGuard_35_val.csv',4)"><font color="black">BigMan + Guard</font></td>
+            <td bgcolor='red'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_bigMan_35_val.csv',5)"><font color="black">BigMan</font></td>
+            <td bgcolor='blue'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_shooter_35_val.csv',6)"><font color="white">Shooter</font></td>
+            <td bgcolor='green'><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_guard_35_val.csv',7)"><font color="white">Guard</font></td>
+            <!--<td><input type="radio" name="reduction" onclick="elbow_plot('PCAelbowrandom.csv')">PCA dimension </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="scatterplot_matrix('scatterplot_matrix_random.csv')">Scatterplot Matrix</td>-->
+            <!--<td><input type="radio" name="reduction" onclick="elbow_plot('PCAelbowrandom.csv')">PCA dimension </td>-->
+            <!--<td><input type="radio" name="reduction" onclick="elbow_plot('PCAelbowrandom.csv')">PCA dimension </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="scatterplot_matrix('scatterplot_matrix_random.csv')">Scatterplot Matrix</td>-->
+            <!--<td><input type="radio" name="reduction" onclick="elbow_plot('PCAelbowrandom.csv')">PCA dimension </td>-->
+        </tr>
+
+        <!--<tr>-->
+           <!--<td> <b>Stratified Sampling</b> </td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_values_stratified('pca.csv')">PCA  </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_values_stratified('correlation.csv')">MDS Correlation </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_values_stratified('euclidean.csv')">MDS Euclidean </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="plot_loadings('player_career_shooter_all_100_val.csv')">Scree Plot </td>-->
+            <!--<td><input type="radio" font="Arial" name="reduction" onclick="scatterplot_matrix('scatterplot_matrix_adaptive.csv')">Scatterplot Matrix </td>-->
+            <!--<td><input type="radio" name="reduction" onclick="elbow_plot('PCAelbowstratified.csv')">PCA dimension </td>-->
+        <!--</tr>-->
+        
+    </table>
+
+    </form>
+    <br>
+    <!--<div id = "scatter_plot" position:relative; width = "100%";>-->
+        <!--<div  width = "50%" height = "400px" style="float:left">-->
+            <!--<svg id = "svg1" width = "100%" height = "400px" background-color="blue">-->
+            <!--</svg>-->
+        <!--</div >-->
+        <!--<div width = "50%" height = "400px" style="float:right">-->
+            <!--<svg id = "svg" width = "100%" height = "400px" background-color="red">-->
+            <!--</svg>-->
+        <!--</div>-->
+    <!--</div>-->
+
+
+    <div id  = "scatter_plot" >
+
+        <svg id = "svg1" width = "23.9%" height="268" background-color="red">
+        </svg>
+
+        <svg id = "svg" width = "75.4%" height="268" background-color="red" onload="plot_loadings('player_career_shooter_all_35_val.csv')" onclick="loadWordCloud('ked')">
+        </svg>
+        <span height="7%" width="600">
+        <p id="hor" width = "23.9%" float="left"><b>Contribution of attributes for best player</b></p>
+        <p id="ver" width = "70.9%"float = "right"><b>Best players</b></p>
+        </span>
+    </div>
+    <br><br><br><br><br><br>
+    <div id="treeMap" width = "1300" height = "300">
+        <select name="attributes" height="9%" style="position: relative; top: -320px; left: 68px;" onchange="bothScatter(this.selectedIndex + 1)">
+            <option value="1">Points</option>
+            <option value="2">Assists</option>
+            <option value="3">Rebounds</option>
+            <option value="4">Blocks</option>
+        </select>
+        <svg id = "svg2" width = "49%" height="90%"  background-color="red" onload="scatter(1)">
+        </svg>
+        <svg id = "svg3" width = "49%" height = "90%" background-color="red" onload="scatter1(1)">
+        </svg>
+
+    </div>
+
+    <script type="text/javascript">
+
+    var w = 1300;
+    var h = 300;
+    var pad = 20;
+    var left_pad = 50;
+  
+
+    
+    var xScale = d3.scale.linear().range([left_pad, w-pad*2]);
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+    
+    var yScale = d3.scale.linear().range([pad, h-pad*2]);
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+
+//    <span style="color:blue;font-weight:bold"></span>
+
+
+//    var span = d3.select("#scatter_plot")
+//        .append("span")
+//        .attr("class","span")
+//        .attr("transform","translate(0,0)")
+//        .attr("background","blue")
+//        .attr("float","left")
+//        .attr("width", w)
+//        .attr("height", h);
+
+//    var svgDiv1 = d3.select("#scatter_plot")
+//        .append("div")
+//        .attr("class","svgDiv1")
+//        .attr("transform","translate(0,0)")
+//        .attr("background","blue")
+//        .attr("float","left")
+//        .attr("display","inline-block")
+//        .attr("width", 300)
+//        .attr("height", 300);
+//
+//    var svg1 = svgDiv1.append("svg") //d3.select("#svgDiv1")
+//        .attr("class","svg1")
+//        .attr("transform","translate(0,0)")
+//        .attr("background","blue")
+//        .attr("float","right")
+//        .attr("display","inline-block")
+//        .attr("width", 300)
+//        .attr("height", 300);
+//
+//    var svgDiv = d3.select("#scatter_plot")
+//        .append("div")
+//        .attr("class","svgDiv")
+//        .attr("transform","translate(310,0)")
+//        .attr("background","blue")
+//        .attr("float","right")
+//        .attr("display","inline-block")
+//        .attr("width", w-290)
+//        .attr("height", h);
+//
+//    var svg = svgDiv.append("svg")
+//                .attr("class","svg1")
+//                .attr("transform","translate(0,0)")
+//                .attr("width", w-290)
+//                .attr("height", h);
+
+//    var hor = d3.select("svg")
+//        .append("div")
+//        .attr("transform","translate(0,0)")
+//        .attr("width", 400)
+//        .attr("height", 300)
+//        .attr("background-color","blue");
+
+
+//    var svg = d3.select("#scatter_plot")
+//                    .append("svg")
+//                    .attr("class","svg")
+//                    .attr("transform","translate(0,0)")
+//                    .attr("width", w)
+//                    .attr("height", h);
+
+    var svg = d3.select("#svg");
+    var svg1 = d3.select("#svg1");
+
+
+//    data = [
+//        {label:"Category 1", value:19},
+//        {label:"Category 2", value:5},
+//        {label:"Category 3", value:13},
+//        {label:"Category 4", value:17},
+//        {label:"Category 5", value:19},
+//        {label:"Category 6", value:27}
+//    ];
+//
+//
+//    var div = d3.select("body").append("div").attr("class", "toolTip");
+//
+//    var axisMargin = 20,
+//        margin = 40,
+//        valueMargin = 4,
+//        width = parseInt(d3.select('body').style('width'), 10),
+//        height = parseInt(d3.select('body').style('height'), 10),
+//        barHeight = (height-axisMargin-margin*2)* 0.4/data.length,
+//        barPadding = (height-axisMargin-margin*2)*0.6/data.length,
+//        data, bar, svg, scale, xAxis, labelWidth = 0;
+//
+//    max = d3.max(data, function(d) { return d.value; });
+//
+////    svg1 = d3.select('body')
+////        .append("svg")
+////        .attr("width", width)
+////        .attr("height", height);
+//
+//
+//    bar = svg1.selectAll("g")
+//        .data(data)
+//        .enter()
+//        .append("g");
+//
+//    bar.attr("class", "bar")
+//        .attr("cx",0)
+//        .attr("transform", function(d, i) {
+//            return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
+//        });
+//
+//    bar.append("text")
+//        .attr("class", "label")
+//        .attr("y", barHeight / 2)
+//        .attr("dy", ".35em") //vertical align middle
+//        .text(function(d){
+//            return d.label;
+//        }).each(function() {
+//        labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+//    });
+//
+//    scale = d3.scale.linear()
+//        .domain([0, max])
+//        .range([0, width - margin*2 - labelWidth]);
+//
+//    xAxis = d3.svg.axis()
+//        .scale(scale)
+//        .tickSize(-height + 2*margin + axisMargin)
+//        .orient("bottom");
+//
+//    bar.append("rect")
+//        .attr("transform", "translate("+labelWidth+", 0)")
+//        .attr("height", barHeight)
+//        .attr("width", function(d){
+//            return scale(d.value);
+//        });
+//
+//    bar.append("text")
+//        .attr("class", "value")
+//        .attr("y", barHeight / 2)
+//        .attr("dx", -valueMargin + labelWidth) //margin right
+//        .attr("dy", ".35em") //vertical align middle
+//        .attr("text-anchor", "end")
+//        .text(function(d){
+//            return (d.value+"%");
+//        })
+//        .attr("x", function(d){
+//            var width = this.getBBox().width;
+//            return Math.max(width + valueMargin, scale(d.value));
+//        });
+//
+//    bar
+//        .on("mousemove", function(d){
+//            div.style("left", d3.event.pageX+10+"px");
+//            div.style("top", d3.event.pageY-25+"px");
+//            div.style("display", "inline-block");
+//            div.html((d.label)+"<br>"+(d.value)+"%");
+//        });
+//    bar
+//        .on("mouseout", function(d){
+//            div.style("display", "none");
+//        });
+//
+//    svg1.insert("g",":first-child")
+//        .attr("class", "axisHorizontal")
+//        .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
+//        .call(xAxis);
+
+
+    var margin = {
+        top: 15,
+        right: 25,
+        bottom: 15,
+        left: 60
+    };
+
+    var width = 390 - margin.left - margin.right,
+        height = 250 - margin.top - margin.bottom;
+
+    d3.csv("./data/player_all_100_corelation.csv", function(error, data) {
+
+
+
+        var x = d3.scale.linear()
+            .range([0, width])
+            .domain([0, d3.max(data, function (d) {
+                return d.val;
+            })]);
+
+        var y = d3.scale.ordinal()
+            .rangeRoundBands([height, 0], .1)
+            .domain(data.map(function (d) {
+                return d.attr;
+            }));
+
+        //make y axis to show bar names
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            //no tick marks
+            .tickSize(0)
+            .orient("left");
+
+        var gy = svg1.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+
+        var bars = svg1.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("g")
+
+        //append rects
+        bars.append("rect")
+            .attr("class", "bar")
+            .attr("y", function (d) {
+                return y(d.attr);
+            })
+            .attr("height", y.rangeBand())
+            .attr("x", 0)
+            .attr("width", function (d) {
+                return x(d.val);
+            });
+
+        //add a value label to the right of each bar
+        bars.append("text")
+            .attr("class", "label")
+            //y position of the label is halfway down the bar
+            .attr("y", function (d) {
+                return y(d.attr) + y.rangeBand() / 2 + 4;
+            })
+            //x position is 3 pixels to the right of the bar
+            .attr("x", function (d) {
+                return x(d.val) + 3;
+            })
+            .text(function (d) {
+                return d.attr;
+            });
+
+
+    });
+
+
+//    var data = [{
+//        "name": "Apples",
+//        "value": 20,
+//    },
+//        {
+//            "name": "Bananas",
+//            "value": 12,
+//        },
+//        {
+//            "name": "Grapes",
+//            "value": 19,
+//        },
+//        {
+//            "name": "Lemons",
+//            "value": 5,
+//        },
+//        {
+//            "name": "Limes",
+//            "value": 16,
+//        },
+//        {
+//            "name": "Oranges",
+//            "value": 26,
+//        },
+//        {
+//            "name": "Pears",
+//            "value": 30,
+//        }];
+//
+//    //sort bars based on value
+//    data = data.sort(function (a, b) {
+//        return d3.ascending(a.value, b.value);
+//    })
+
+    //set up svg using margin conventions - we'll need plenty of room on the left for labels
+
+
+//    var svg = d3.select("#graphic").append("svg")
+//        .attr("width", width + margin.left + margin.right)
+//        .attr("height", height + margin.top + margin.bottom)
+//        .append("g")
+//        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+
+
+
+
+
+</script>
+</head>
+<body {
+  background-color:"bgimage.jpg";
+  font-family: "Arial Black", Helvetica, sans-serif;
+  font-size: 16em;
+  color: blue;
+}>
+
+</body>
+</html>
